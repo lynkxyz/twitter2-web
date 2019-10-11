@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { genOtp, verifyOtp } from "../services/auth.service"
 import { api } from "../services/base.service"
 import { useNavigation } from "react-navi"
+import get from "ts-get"
 
 type Props = {
   authService: any
@@ -17,7 +18,7 @@ export const OtpVerify: React.FC<Props> = props => {
       const payload = await genOtp()
       setOtpHint(payload.data.otp)
     } catch (e) {
-      console.log(e)
+      alert(get(e, o => o.response.data.error))
     }
   }
 
@@ -28,7 +29,7 @@ export const OtpVerify: React.FC<Props> = props => {
       api.defaults.headers["Authorization"] = `Bearer ${payload.data.token}`
       navigation.navigate("/newsfeeds")
     } catch (e) {
-      console.log(e)
+      alert(get(e, o => o.response.data.error))
     }
   }
 
