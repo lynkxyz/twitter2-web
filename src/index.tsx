@@ -11,7 +11,6 @@ try {
 
   if (rawAuth) {
     AuthStore.currentUser = JSON.parse(rawAuth)
-    console.log(AuthStore.currentUser)
     if (isObject(AuthStore.currentUser)) {
       api.defaults.headers["Authorization"] = `Bearer ${
         (AuthStore.currentUser as any).token

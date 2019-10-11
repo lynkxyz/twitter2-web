@@ -2,7 +2,10 @@ import { api } from "./base.service"
 
 export const getTweets = (params = {}) =>
   api.get("/tweets", {
-    params
+    params: {
+      sort_by: "inserted_at-1",
+      ...params
+    }
   })
 
 type CreateTweetDto = {

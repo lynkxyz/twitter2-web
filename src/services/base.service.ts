@@ -1,8 +1,8 @@
 import axios from "axios"
 
 export const api = axios.create({
-  baseURL: "http://localhost:4000/api/v1",
-  timeout: 1000
+  baseURL: "https://sheltered-brook-01438.herokuapp.com/api/v1",
+  timeout: 5000
 })
 
 export const pingOtp = () => api.get("/ping-otp")

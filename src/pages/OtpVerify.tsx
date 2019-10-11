@@ -15,7 +15,6 @@ export const OtpVerify: React.FC<Props> = props => {
   async function onGenOtp() {
     try {
       const payload = await genOtp()
-      console.log(payload)
       setOtpHint(payload.data.otp)
     } catch (e) {
       console.log(e)
@@ -25,7 +24,6 @@ export const OtpVerify: React.FC<Props> = props => {
   async function onVerifyOtp() {
     try {
       const payload = await verifyOtp(otp)
-      console.log(payload)
       localStorage.setItem("auth", JSON.stringify(payload.data))
       api.defaults.headers["Authorization"] = `Bearer ${payload.data.token}`
       navigation.navigate("/newsfeeds")

@@ -34,7 +34,6 @@ export const NewsFeeds: React.FC<Props> = props => {
   async function onGetTweets(params = {}) {
     try {
       const result = await getTweets(params)
-      console.log(result.data)
       setTweets(result.data.data)
     } catch (e) {
       console.log(e)
@@ -98,7 +97,9 @@ export const NewsFeeds: React.FC<Props> = props => {
       </button>
       <hr />
       <p>
-        <button onClick={() => onGetTweets({})}>Clear</button>
+        <button onClick={() => onGetTweets({ sort_by: "inserted_at-1" })}>
+          Clear
+        </button>
         <button onClick={() => onGetTweets({ sort_by: "like_count-1" })}>
           Most Like
         </button>

@@ -20,6 +20,7 @@ export function withAuthentication(matcher: any, isOtpPage = false) {
           encodeURIComponent(request.mountpath + request.search)
       )
     } catch (e) {
+      localStorage.clear()
       return redirect(
         "/login?redirectTo=" +
           encodeURIComponent(request.mountpath + request.search)

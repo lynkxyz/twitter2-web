@@ -3,14 +3,15 @@ import { signIn, signUp } from "../services/auth.service"
 import { AuthStore } from "../stores/AuthStore"
 import { api } from "../services/base.service"
 import { useNavigation } from "react-navi"
+import get from "ts-get"
 
 type Props = {
   authService: any
 }
 
 export const Login: React.FC<Props> = props => {
-  const [email, setEmail] = useState("linh1@gmail.com")
-  const [username, setUsername] = useState("linh1")
+  const [email, setEmail] = useState("linh@gmail.com")
+  const [username, setUsername] = useState("linh")
   const [password, setPassword] = useState("123456")
   const [confirmPwd, setConfirmPwd] = useState("123456")
   const [isSignUp, setIsSignUp] = useState(false)
@@ -23,7 +24,7 @@ export const Login: React.FC<Props> = props => {
       AuthStore.login(payload.data)
       navigation.navigate("/otp")
     } catch (e) {
-      console.log(e)
+      alert(get(e, o => o.response.data.message))
     }
   }
 
@@ -39,7 +40,7 @@ export const Login: React.FC<Props> = props => {
       AuthStore.login(payload.data)
       navigation.navigate("/otp")
     } catch (e) {
-      console.log(e)
+      alert(JSON.stringify(get(e, o => o.response.data, "{}")))
     }
   }
 
