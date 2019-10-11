@@ -1,17 +1,22 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import { AuthStore } from "../stores/AuthStore"
-import { getTweets, createLike } from "../services/tweet.service"
+import { getTweets, createLike, createTweet } from "../services/tweet.service"
 import useAsyncEffect from "use-async-effect"
 import moment from "moment"
+import get from "ts-get"
 
 type Props = {
   authService: any
 }
 
-const Tweet = ({ data }) => {
+const Tweet = ({ data, isRetweet }) => {
   return (
-    <div>
-      <p>{data.user.username}</p>
+    <div
+      style={{
+        marginLeft: isRetweet ? 50 : 0
+      }}
+    >
+      <p>{data.user ? data.user.username : ""}</p>
       <p>{moment(data.inserted_at).fromNow()}</p>
       <p>{data.content}</p>
     </div>
@@ -20,6 +25,7 @@ const Tweet = ({ data }) => {
 
 export const NewsFeeds: React.FC<Props> = props => {
   const [tweets, setTweets] = useState([])
+  const [tweetContent, setTweetContent] = useState("")
 
   useAsyncEffect(async () => {
     await onGetTweets()
@@ -35,25 +41,62 @@ export const NewsFeeds: React.FC<Props> = props => {
     }
   }
 
-  async function onLike(tweet_id: number) {
+  async function onLike(tweetId: number, likedByMe?: boolean) {
     try {
-      const result = await createLike(tweet_id)
-      setTweets(tweets.map(t => ({ ...t, like_count: t.like_count + 1 })))
+      await createLike(tweetId)
+      setTweets(
+        tweets.map(t => {
+          if (tweetId === t.id) {
+            return {
+              ...t,
+              liked_by_me: !likedByMe,
+              like_count: likedByMe ? t.like_count - 1 : t.like_count + 1
+            }
+          }
+
+          return t
+        })
+      )
     } catch (e) {
       console.log(e)
     }
   }
 
+  async function onCreateTweet() {
+    try {
+      const payload = await createTweet({ content: tweetContent })
+      const data = [payload.data.data].concat(tweets)
+      setTweets(data)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  async function onRetweet(originalTweetId: string) {
+    try {
+      const content = prompt("Please enter tweet content")
+      const payload = await createTweet({
+        content: content,
+        original_tweet_id: originalTweetId
+      })
+      const data = [payload.data.data].concat(tweets)
+      setTweets(data)
+    } catch (e) {
+      alert(get(e, o => o.response.data.error))
+    }
+  }
+
   return (
     <div>
-      <h1>Hello</h1>
       <button
         onClick={() => {
           AuthStore.logout()
         }}
+        style={{ backgroundColor: "red", color: "white" }}
       >
         Logout
       </button>
+      <hr />
       <p>
         <button onClick={() => onGetTweets({})}>Clear</button>
         <button onClick={() => onGetTweets({ sort_by: "like_count-1" })}>
@@ -64,13 +107,35 @@ export const NewsFeeds: React.FC<Props> = props => {
         </button>
       </p>
       <div>
+        <input
+          value={tweetContent}
+          onChange={e => setTweetContent(e.target.value)}
+          type="text"
+          placeholder="Enter your tweet"
+        />
+        <button onClick={onCreateTweet}>Submit</button>
+      </div>
+      <br />
+      <div>
         {tweets.map((t, index) => (
           <div key={index}>
             {t.original_tweet && <p>Retweet by {t.user.username}</p>}
-            <Tweet data={t.original_tweet ? t.original_tweet : t} />
+            <Tweet
+              data={t.original_tweet ? t.original_tweet : t}
+              isRetweet={!!t.original_tweet}
+            />
 
-            <button onClick={() => onLike(t.id)}>Like {t.like_count}</button>
-            <button>Retweet {t.retweet_count}</button>
+            <button
+              onClick={() => onLike(t.id, t.liked_by_me)}
+              style={{
+                backgroundColor: t.liked_by_me ? "tomato" : "white"
+              }}
+            >
+              Like {t.like_count}
+            </button>
+            <button onClick={() => onRetweet(t.id)}>
+              Retweet {t.retweet_count}
+            </button>
             <hr />
           </div>
         ))}

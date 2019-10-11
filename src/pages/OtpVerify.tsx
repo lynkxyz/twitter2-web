@@ -1,6 +1,5 @@
 import React, { useState } from "react"
-import { signIn, genOtp, verifyOtp } from "../services/auth.service"
-import { AuthStore } from "../stores/AuthStore"
+import { genOtp, verifyOtp } from "../services/auth.service"
 import { api } from "../services/base.service"
 import { useNavigation } from "react-navi"
 
@@ -10,12 +9,14 @@ type Props = {
 
 export const OtpVerify: React.FC<Props> = props => {
   const [otp, setOtp] = useState("")
+  const [otpHint, setOtpHint] = useState("")
   const navigation = useNavigation()
 
   async function onGenOtp() {
     try {
       const payload = await genOtp()
       console.log(payload)
+      setOtpHint(payload.data.otp)
     } catch (e) {
       console.log(e)
     }
@@ -35,6 +36,8 @@ export const OtpVerify: React.FC<Props> = props => {
 
   return (
     <div>
+      {otpHint && <span>Your OTP code is: {otpHint}</span>}
+      <br />
       <input
         placeholder="otp"
         value={otp}

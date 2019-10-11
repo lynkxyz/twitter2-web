@@ -1,6 +1,4 @@
 import React, { useState, useEffect, Suspense } from "react"
-import { Box, Button, Heading, Grommet } from "grommet"
-import { Notification } from "grommet-icons"
 import { Router, View } from "react-navi"
 import { routes } from "./routes"
 import { AuthStore } from "./stores/AuthStore"

@@ -5,7 +5,11 @@ type SignInDto = {
   password: string
 }
 
+type SignUpDto = { confirmPassword: string; username: string } & SignInDto
+
 export const signIn = (data: SignInDto) => api.post("/sign-in", data)
+
+export const signUp = (data: SignUpDto) => api.post("/sign-up", data)
 
 export const signOut = () => api.post("/sign-out")
 
