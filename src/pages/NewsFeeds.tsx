@@ -121,6 +121,8 @@ export const NewsFeeds: React.FC<Props> = props => {
         {tweets.map((t, index) => (
           <div key={index}>
             {t.original_tweet && <p>Retweet by {t.user.username}</p>}
+            {t.original_tweet && <p>{t.content}</p>}
+            {t.original_tweet && <p>{moment(t.inserted_at).fromNow()}</p>}
             <Tweet
               data={t.original_tweet ? t.original_tweet : t}
               isRetweet={!!t.original_tweet}
